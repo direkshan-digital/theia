@@ -44,14 +44,12 @@ export class SemanticHighlightingService implements Disposable {
      */
     register(languageId: string, scopes: string[][] | undefined): Disposable {
         if (scopes && scopes.length > 0) {
-            this.logger.info(`Registering scopes for language: ${languageId}.`);
+            this.logger.debug(`Registering scopes for language: ${languageId}.`);
             if (this.scopes.has(languageId)) {
-                const error = new Error(`The scopes are already registered for language: ${languageId}.`);
-                this.logger.error(error.message);
-                throw error;
+                this.logger.warn(`The scopes are already registered for language: ${languageId}.`);
             }
             this.scopes.set(languageId, scopes.map(scope => scope.slice(0)));
-            this.logger.info(`The scopes have been successfully registered for ${languageId}.`);
+            this.logger.debug(`The scopes have been successfully registered for ${languageId}.`);
             const unregister: (id: string) => void = this.unregister.bind(this);
             return Disposable.create(() => unregister(languageId));
         }
@@ -59,14 +57,12 @@ export class SemanticHighlightingService implements Disposable {
     }
 
     protected unregister(languageId: string): void {
-        this.logger.info(`Unregistering scopes for language: ${languageId}.`);
+        this.logger.debug(`Unregistering scopes for language: ${languageId}.`);
         if (!this.scopes.has(languageId)) {
-            const error = new Error(`No scopes were registered for language: ${languageId}.`);
-            this.logger.error(error.message);
-            throw error;
+            this.logger.warn(`No scopes were registered for language: ${languageId}.`);
         }
         this.scopes.delete(languageId);
-        this.logger.info(`The scopes have been successfully unregistered for ${languageId}.`);
+        this.logger.debug(`The scopes have been successfully unregistered for ${languageId}.`);
     }
 
     /**
