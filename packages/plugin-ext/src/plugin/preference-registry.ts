@@ -87,8 +87,11 @@ export class PreferenceRegistryExtImpl implements PreferenceRegistryExt {
                 if (typeof result === 'undefined') {
                     return defaultValue;
                 } else {
+                    // tslint:disable-next-line:no-any
                     let clonedConfig: any = undefined;
+                    // tslint:disable-next-line:no-any
                     const cloneOnWriteProxy = (target: any, accessor: string): any => {
+                        // tslint:disable-next-line:no-any
                         let clonedTarget: any = undefined;
                         const cloneTarget = () => {
                             clonedConfig = clonedConfig ? clonedConfig : cloneDeep(preferences);
@@ -99,6 +102,7 @@ export class PreferenceRegistryExtImpl implements PreferenceRegistryExt {
                             return target;
                         }
                         return new Proxy(target, {
+                            // tslint:disable-next-line:no-any
                             get: (targ: any, prop: string) => {
                                 if (typeof prop === 'string' && prop.toLowerCase() === 'tojson') {
                                     cloneTarget();
@@ -114,16 +118,19 @@ export class PreferenceRegistryExtImpl implements PreferenceRegistryExt {
                                 }
                                 return res;
                             },
+                            // tslint:disable-next-line:no-any
                             set: (targ: any, prop: string, val: any) => {
                                 cloneTarget();
                                 clonedTarget[prop] = val;
                                 return true;
                             },
+                            // tslint:disable-next-line:no-any
                             deleteProperty: (targ: any, prop: string) => {
                                 cloneTarget();
                                 delete clonedTarget[prop];
                                 return true;
                             },
+                            // tslint:disable-next-line:no-any
                             defineProperty: (targ: any, prop: string, descr: any) => {
                                 cloneTarget();
                                 Object.defineProperty(clonedTarget, prop, descr);
@@ -134,6 +141,7 @@ export class PreferenceRegistryExtImpl implements PreferenceRegistryExt {
                     return cloneOnWriteProxy(result, key);
                 }
             },
+            // tslint:disable-next-line:no-any
             update: (key: string, value: any, arg?: ConfigurationTarget | boolean): PromiseLike<void> => {
                 key = section ? `${section}.${key}` : key;
                 if (typeof value !== 'undefined') {
@@ -149,19 +157,26 @@ export class PreferenceRegistryExtImpl implements PreferenceRegistryExt {
         return configuration;
     }
 
+    // tslint:disable-next-line:no-any
     private toReadonlyValue(data: any): any {
+        // tslint:disable-next-line:no-any
         const readonlyProxy = (target: any): any => isObject(target)
             ? new Proxy(target, {
+                // tslint:disable-next-line:no-any
                 get: (targ: any, prop: string) => readonlyProxy(targ[prop]),
+                // tslint:disable-next-line:no-any
                 set: (targ: any, prop: string, val: any) => {
                     throw new Error(`TypeError: Cannot assign to read only property '${prop}' of object`);
                 },
+                // tslint:disable-next-line:no-any
                 deleteProperty: (targ: any, prop: string) => {
                     throw new Error(`TypeError: Cannot delete read only property '${prop}' of object`);
                 },
+                // tslint:disable-next-line:no-any
                 defineProperty: (targ: any, prop: string) => {
                     throw new Error(`TypeError: Cannot define property '${prop}' of a readonly object`);
                 },
+                // tslint:disable-next-line:no-any
                 setPrototypeOf: (targ: any) => {
                     throw new Error('TypeError: Cannot set prototype for a readonly object');
                 },
@@ -172,7 +187,9 @@ export class PreferenceRegistryExtImpl implements PreferenceRegistryExt {
         return readonlyProxy(data);
     }
 
+    // tslint:disable-next-line:no-any
     private parse(data: any): any {
+        // tslint:disable-next-line:no-any
         return Object.keys(data).reduce((result: any, key: string) => {
             const parts = key.split('.');
             let branch = result;
@@ -196,6 +213,7 @@ export class PreferenceRegistryExtImpl implements PreferenceRegistryExt {
                 const tree = eventData.preferenceName
                     .split('.')
                     .reverse()
+                    // tslint:disable-next-line:no-any
                     .reduce((prevValue: any, curValue: any) => ({ [curValue]: prevValue }), eventData.newValue);
                 return !!lookUp(tree, section);
             }

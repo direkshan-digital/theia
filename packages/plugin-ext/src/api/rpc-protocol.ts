@@ -55,10 +55,14 @@ export function createProxyIdentifier<T>(identifier: string): ProxyIdentifier<T>
 export class RPCProtocolImpl implements RPCProtocol {
 
     private isDisposed: boolean;
+    // tslint:disable-next-line:no-any
     private readonly locals: { [id: string]: any; };
+    // tslint:disable-next-line:no-any
     private readonly proxies: { [id: string]: any; };
     private lastMessageId: number;
+    // tslint:disable-next-line:no-any
     private readonly invokedHandlers: { [req: string]: Promise<any>; };
+    // tslint:disable-next-line:no-any
     private readonly pendingRPCReplies: { [msgId: string]: Deferred<any>; };
     private readonly multiplexor: RPCMultiplexer;
     private messageToSendHostId: string | undefined;
@@ -89,8 +93,10 @@ export class RPCProtocolImpl implements RPCProtocol {
 
     private createProxy<T>(proxyId: string): T {
         const handler = {
+            // tslint:disable-next-line:no-any
             get: (target: any, name: string) => {
                 if (!target[name] && name.charCodeAt(0) === 36 /* CharCode.DollarSign */) {
+                    // tslint:disable-next-line:no-any
                     target[name] = (...myArgs: any[]) =>
                         this.remoteCall(proxyId, name, myArgs);
                 }
@@ -101,6 +107,7 @@ export class RPCProtocolImpl implements RPCProtocol {
         return new Proxy(Object.create(null), handler);
     }
 
+    // tslint:disable-next-line:no-any
     private remoteCall(proxyId: string, methodName: string, args: any[]): Promise<any> {
         if (this.isDisposed) {
             return Promise.reject(canceled());
@@ -122,12 +129,15 @@ export class RPCProtocolImpl implements RPCProtocol {
         const msg = <RPCMessage>JSON.parse(rawmsg);
 
         // handle message that sets the Host ID
+        // tslint:disable-next-line:no-any
         if ((<any>msg).setHostID) {
+            // tslint:disable-next-line:no-any
             this.messageToSendHostId = (<any>msg).setHostID;
             return;
         }
 
         // skip message if not matching host
+        // tslint:disable-next-line:no-any
         if (this.remoteHostID && (<any>msg).hostID && this.remoteHostID !== (<any>msg).hostID) {
             return;
         }
@@ -191,6 +201,7 @@ export class RPCProtocolImpl implements RPCProtocol {
         pendingReply.reject(err);
     }
 
+    // tslint:disable-next-line:no-any
     private invokeHandler(proxyId: string, methodName: string, args: any[]): Promise<any> {
         try {
             return Promise.resolve(this.doInvokeHandler(proxyId, methodName, args));
@@ -199,6 +210,7 @@ export class RPCProtocolImpl implements RPCProtocol {
         }
     }
 
+    // tslint:disable-next-line:no-any
     private doInvokeHandler(proxyId: string, methodName: string, args: any[]): any {
         if (!this.locals[proxyId]) {
             throw new Error('Unknown actor ' + proxyId);
@@ -267,6 +279,7 @@ class RPCMultiplexer {
 
 class MessageFactory {
 
+    // tslint:disable-next-line:no-any
     public static request(req: string, rpcId: string, method: string, args: any[], messageToSendHostId?: string): string {
         let prefix = '';
         if (messageToSendHostId) {
@@ -275,6 +288,7 @@ class MessageFactory {
         return `{${prefix}"type":${MessageType.Request},"id":"${req}","proxyId":"${rpcId}","method":"${method}","args":${JSON.stringify(args)}}`;
     }
 
+    // tslint:disable-next-line:no-any
     public static replyOK(req: string, res: any, messageToSendHostId?: string): string {
         let prefix = '';
         if (messageToSendHostId) {
@@ -286,6 +300,7 @@ class MessageFactory {
         return `{${prefix}"type":${MessageType.Reply},"id":"${req}","res":${JSON.stringify(res)}}`;
     }
 
+    // tslint:disable-next-line:no-any
     public static replyErr(req: string, err: any, messageToSendHostId?: string): string {
         let prefix = '';
         if (messageToSendHostId) {
@@ -309,12 +324,14 @@ class RequestMessage {
     id: string;
     proxyId: string;
     method: string;
+    // tslint:disable-next-line:no-any
     args: any[];
 }
 
 class ReplyMessage {
     type: MessageType.Reply;
     id: string;
+    // tslint:disable-next-line:no-any
     res: any;
 }
 
@@ -336,6 +353,7 @@ export interface SerializedError {
 export function transformErrorForSerialization(error: Error): SerializedError {
     if (error instanceof Error) {
         const { name, message } = error;
+        // tslint:disable-next-line:no-any
         const stack: string = (<any>error).stacktrace || error.stack;
         return {
             $isError: true,

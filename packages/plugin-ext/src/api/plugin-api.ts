@@ -42,6 +42,7 @@ import {
 
 export interface PluginInitData {
     plugins: PluginMetadata[];
+    // tslint:disable-next-line:no-any
     preferences: { [key: string]: any };
     env: EnvInit;
 }
@@ -120,11 +121,13 @@ export interface CommandRegistryMain {
     $registerCommand(command: theia.Command): void;
 
     $unregisterCommand(id: string): void;
+    // tslint:disable-next-line:no-any
     $executeCommand<T>(id: string, args: any[]): PromiseLike<T | undefined>;
     $getCommands(): PromiseLike<string[]>;
 }
 
 export interface CommandRegistryExt {
+    // tslint:disable-next-line:no-any
     $executeCommand<T>(id: string, ...ars: any[]): PromiseLike<T>;
 }
 
@@ -305,7 +308,9 @@ export interface WorkspaceFolderPickOptionsMain {
 
 export interface QuickOpenMain {
     $show(options: PickOptions): Promise<number | number[]>;
+    // tslint:disable-next-line:no-any
     $setItems(items: PickOpenItem[]): Promise<any>;
+    // tslint:disable-next-line:no-any
     $setError(error: Error): Promise<any>;
     $input(options: theia.InputBoxOptions, validateInput: boolean): Promise<string | undefined>;
 }
@@ -329,12 +334,15 @@ export interface DialogsMain {
 export interface TreeViewsMain {
     $registerTreeDataProvider(treeViewId: string): void;
     $refresh(treeViewId: string): void;
+    // tslint:disable-next-line:no-any
     $reveal(treeViewId: string, treeItemId: string): Promise<any>;
 }
 
 export interface TreeViewsExt {
     $getChildren(treeViewId: string, treeItemId: string | undefined): Promise<TreeViewItem[] | undefined>;
+    // tslint:disable-next-line:no-any
     $setExpanded(treeViewId: string, treeItemId: string, expanded: boolean): Promise<any>;
+    // tslint:disable-next-line:no-any
     $setSelection(treeViewId: string, treeItemId: string): Promise<any>;
 }
 
@@ -629,16 +637,20 @@ export interface PreferenceRegistryMain {
     $updateConfigurationOption(
         target: boolean | ConfigurationTarget | undefined,
         key: string,
+        // tslint:disable-next-line:no-any
         value: any,
+        // tslint:disable-next-line:no-any
         resource: any | undefined
     ): PromiseLike<void>;
     $removeConfigurationOption(
         target: boolean | ConfigurationTarget | undefined,
         key: string,
+        // tslint:disable-next-line:no-any
         resource: any | undefined
     ): PromiseLike<void>;
 }
 export interface PreferenceRegistryExt {
+    // tslint:disable-next-line:no-any
     $acceptConfigurationChanged(data: { [key: string]: any }, eventData: PreferenceChange): void;
 }
 
